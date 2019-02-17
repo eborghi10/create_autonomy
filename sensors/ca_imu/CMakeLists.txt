@@ -18,5 +18,5 @@ if( ${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm" )
   include_directories(${catkin_INCLUDE_DIRS})
 
 else()
-  message( STATUS "Avoid compiling ca_mpu6050 because it's not an ARM architecture" )
+  message( STATUS "Avoid compiling ca_imu because it's not an ARM architecture" )
 endif()

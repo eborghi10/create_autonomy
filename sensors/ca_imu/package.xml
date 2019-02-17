@@ -2,7 +2,7 @@
 <package format="2">
   <name>ca_imu</name>
   <version>0.0.0</version>
-  <description>The ca_mpu6050 package</description>
+  <description>The ca_imu package</description>
 
   <maintainer email="emiliano.borghi@gmail.com">Emiliano Borghi</maintainer>
 
