@@ -37,7 +37,7 @@ class ModelPosePublisherPlugin : public ModelPlugin
           std::bind(&ModelPosePublisherPlugin::OnUpdate, this));
       this->prev_update_time_ = ros::Time::now();
 
-      this->rosnode_ = new ros::NodeHandle("ModelPose");
+      this->rosnode_.reset(new ros::NodeHandle("ModelPose"));
       this->pub_ = this->rosnode_->advertise<geometry_msgs::Pose>("/ca_gazebo/model_pose", 100);
     }
 
@@ -49,21 +49,22 @@ class ModelPosePublisherPlugin : public ModelPlugin
       }
 
       geometry_msgs::Pose msg;
-      msg.position.x = this->model->GetLink("link")->WorldPose().Pos().X();
-      msg.position.y = this->model->GetLink("link")->WorldPose().Pos().Y();
-      msg.position.z = this->model->GetLink("link")->WorldPose().Pos().Z();
+      ignition::math::Pose3d pose = this->model->GetLink("link")->WorldPose();
+      msg.position.x = pose.Pos().X();
+      msg.position.y = pose.Pos().Y();
+      msg.position.z = pose.Pos().Z();
 
-      msg.orientation.x = this->model->GetLink("link")->WorldPose().Rot().X();
-      msg.orientation.y = this->model->GetLink("link")->WorldPose().Rot().Y();
-      msg.orientation.z = this->model->GetLink("link")->WorldPose().Rot().Z();
-      msg.orientation.w = this->model->GetLink("link")->WorldPose().Rot().W();
+      msg.orientation.x = pose.Rot().X();
+      msg.orientation.y = pose.Rot().Y();
+      msg.orientation.z = pose.Rot().Z();
+      msg.orientation.w = pose.Rot().W();
 
       this->pub_.publish(msg);
 
       this->prev_update_time_ = ros::Time::now();
     }
 
-    private: ros::NodeHandle* rosnode_;
+    private: std::shared_ptr<ros::NodeHandle> rosnode_;
     private: ros::Publisher pub_;
     // Pointer to the model
     private: physics::ModelPtr model;
