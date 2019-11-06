@@ -8,6 +8,7 @@
 #include "gazebo/physics/physics.hh"
 #include "gazebo/transport/transport.hh"
 #include "std_msgs/String.h"
+#include "geometry_msgs/Pose.h"
 
 static const ros::Duration update_rate = ros::Duration(1); // 1 Hz
 namespace gazebo
@@ -36,26 +37,34 @@ class ModelPosePublisherPlugin : public ModelPlugin
           std::bind(&ModelPosePublisherPlugin::OnUpdate, this));
       this->prev_update_time_ = ros::Time::now();
 
-      // this->rosnode_.reset(new ros::NodeHandle("/model_pose_plugin"));
-      // this->pose_pub_ = this->rosnode_->advertise<std_msgs::String>("model_pose", 1000);
+      this->rosnode_ = new ros::NodeHandle("ModelPose");
+      this->pub_ = this->rosnode_->advertise<geometry_msgs::Pose>("/ca_gazebo/model_pose", 100);
     }
+
     // Called by the world update start event
     public: void OnUpdate()
     {
       if ((ros::Time::now() - this->prev_update_time_) < update_rate) {
        return;
-     }
-     ROS_INFO("publishing door pose");
-     ROS_INFO("door_pose x=%f y=%f z=%f",
-      this->model->RelativePose().Pos().X(),
-      this->model->RelativePose().Pos().Y(),
-      this->model->RelativePose().Pos().Z());
+      }
 
-     this->prev_update_time_ = ros::Time::now();
-     // Apply a small linear velocity to the model.
-     //this->model->SetLinearVel(ignition::math::Vector3d(0, .3, 0));
+      geometry_msgs::Pose msg;
+      msg.position.x = this->model->GetLink("link")->WorldPose().Pos().X();
+      msg.position.y = this->model->GetLink("link")->WorldPose().Pos().Y();
+      msg.position.z = this->model->GetLink("link")->WorldPose().Pos().Z();
+
+      msg.orientation.x = this->model->GetLink("link")->WorldPose().Rot().X();
+      msg.orientation.y = this->model->GetLink("link")->WorldPose().Rot().Y();
+      msg.orientation.z = this->model->GetLink("link")->WorldPose().Rot().Z();
+      msg.orientation.w = this->model->GetLink("link")->WorldPose().Rot().W();
+
+      this->pub_.publish(msg);
+
+      this->prev_update_time_ = ros::Time::now();
     }
 
+    private: ros::NodeHandle* rosnode_;
+    private: ros::Publisher pub_;
     // Pointer to the model
     private: physics::ModelPtr model;
 
