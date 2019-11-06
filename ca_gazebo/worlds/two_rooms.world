@@ -84,7 +84,7 @@
         <static>0</static>
         <link name='link'>
           <inertial>
-            <mass>0.05</mass>
+            <mass>1</mass>
             <pose frame=''>0 0 0 0 -0 0</pose>
           </inertial>
           <pose frame=''>0.002741 -0.017964 1.2465 0 -0 0</pose>
@@ -122,8 +122,8 @@
             <surface>
               <friction>
                 <ode>
-                  <mu>1</mu>
-                  <mu2>1</mu2>
+                  <mu>0.2</mu>
+                  <mu2>0.2</mu2>
                   <fdir1>0 0 0</fdir1>
                   <slip1>0</slip1>
                   <slip2>0</slip2>

@@ -1,9 +1,10 @@
 <launch>
 	<arg name="env" default="empty"/>
-
-  	<arg name="paused" value="$(optenv PAUSED false)"/>
+	<arg name="paused" value="$(optenv PAUSED false)"/>
 	<arg name="gui" value="$(optenv GUI true)"/>
 	<arg name="debug" value="$(optenv DEBUG false)"/>
+
+  <arg name="localization" default="$(optenv LOCALIZATION none)"/>
 
 	<!-- Launch Gazebo world -->
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -11,10 +12,10 @@
 		<arg name="gui" value="$(arg gui)" />
 		<arg name="paused" value="$(arg paused)"/>
 		<arg name="use_sim_time" value="true"/>
-		<arg name="verbose" value="true"/>
+		<arg name="verbose" value="$(arg debug)"/>
 		<arg name="world_name" value="$(find ca_gazebo)/worlds/$(arg env).world"/>
 	</include>
-	
+
 	<group if="$(eval str(arg('env'))=='empty')">
 			<param name="create1/amcl/initial_pose_x" value="-3"/>
 			<param name="create1/amcl/initial_pose_y" value="4"/>
@@ -26,10 +27,13 @@
 
 
 	<!-- Spawn robot/s -->
-	<include file="$(find ca_gazebo)/launch/spawn_multirobot.launch"/>
+	<include file="$(find ca_gazebo)/launch/spawn_multirobot.launch">
+		<arg name="localization" value="$(arg localization)" />
+	</include>
 
   <!-- map_server -->
-  <include file="$(find ca_move_base)/launch/map_server.launch">
+  <include if="$(eval str(arg('localization'))=='amcl')"
+			file="$(find ca_move_base)/launch/map_server.launch">
 	<arg name="env" value="$(arg env)"/>
   </include>
 

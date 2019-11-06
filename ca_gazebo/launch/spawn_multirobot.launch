@@ -3,7 +3,7 @@
   <arg name="nr" default="$(optenv NUM_ROBOTS 1)"/>
   <arg name="rviz" default="$(optenv RVIZ true)"/>
   <arg name="localization" default="$(optenv LOCALIZATION none)"/>
-  
+
   <!-- Start 1 robot -->
   <group ns="$(eval 'create' + str(arg('nr')))">
     <include file="$(find ca_gazebo)/launch/spawn_create.launch">
@@ -30,5 +30,6 @@
   <include file="$(find ca_gazebo)/launch/spawn_multirobot.launch" if="$(eval arg('nr') - 1 > 0)">
     <arg name="nr" value="$(eval arg('nr') - 1)"/>
     <arg name="rviz" value="false"/>
+    <arg name="localization" value="$(arg localization)" />
   </include>
 </launch>
