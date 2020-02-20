@@ -72,7 +72,7 @@ def is_running():
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--cmd', dest='command', default='tmux')
+    parser.add_argument('-c', '--cmd', dest='command', default='bash')
     parser.add_argument('-g', '--gazebo', dest="gazebo_version", default="9")
     parser.add_argument('-r', '--ros', dest="ros_version", default="melodic")
     args = parser.parse_args()
